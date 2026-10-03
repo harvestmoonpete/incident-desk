@@ -1,0 +1,58 @@
+name: incident-desk
+services:
+  web:
+    build: .
+    ports: ["8082:80"]
+    depends_on:
+      api: { condition: service_healthy }
+  api:
+    build: { context: ., dockerfile: backend/Dockerfile }
+    environment:
+      DATABASE_URL: postgresql://desk:desk@db:5432/desk
+      TELEMETRY_URL: http://telemetry:3001
+      MODEL_API_KEY: ${MODEL_API_KEY:-}
+      MODEL_BASE_URL: ${MODEL_BASE_URL:-https://api.openai.com/v1}
+      MODEL_NAME: ${MODEL_NAME:-gpt-4.1-mini}
+    depends_on:
+      db: { condition: service_healthy }
+      telemetry: { condition: service_healthy }
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  telemetry:
+    build: { context: ., dockerfile: service/Dockerfile }
+    environment:
+      DATABASE_URL: postgresql://desk:desk@db:5432/desk
+    depends_on:
+      db: { condition: service_healthy }
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3001/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  db:
+    image: postgres:17.4-alpine
+    environment:
+      { POSTGRES_USER: desk, POSTGRES_PASSWORD: desk, POSTGRES_DB: desk }
+    volumes: ["desk-db:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U desk"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+volumes:
+  desk-db:
