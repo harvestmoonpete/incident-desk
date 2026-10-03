@@ -2,7 +2,7 @@ name: incident-desk
 services:
   web:
     build: .
-    ports: ["8082:80"]
+    ports: ["127.0.0.1:8082:80"]
     depends_on:
       api: { condition: service_healthy }
   api:
