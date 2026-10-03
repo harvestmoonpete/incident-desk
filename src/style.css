@@ -148,14 +148,14 @@ header {
   letter-spacing: 1px;
 }
 .muted {
-  color: #a7b0a0;
+  color: #506348;
   margin: 0 12px;
 }
 .quiet {
   border: 0;
   background: none;
   font-size: 12px;
-  color: #64756d;
+  color: #506348;
 }
 .intro {
   padding: 45px 0 34px;
@@ -165,7 +165,7 @@ header {
   gap: 20px;
 }
 .intro .eyebrow {
-  color: #6b8063;
+  color: #506348;
 }
 h1 {
   font-family: Manrope, sans-serif;
@@ -179,7 +179,7 @@ p {
 }
 .intro p {
   font-size: 14px;
-  color: #718077;
+  color: #506348;
   margin: 0;
 }
 .modebadge {
@@ -216,7 +216,7 @@ p {
   border-radius: 50%;
   padding: 3px 6px;
   margin-right: 6px;
-  color: #668153;
+  color: #506348;
 }
 .incident {
   display: flex;
@@ -228,7 +228,7 @@ p {
 .tag {
   font-size: 9px;
   letter-spacing: 1.5px;
-  color: #778766;
+  color: #506348;
 }
 h2 {
   font-family: Manrope, sans-serif;
@@ -237,7 +237,7 @@ h2 {
 }
 .incident p {
   font-size: 11px;
-  color: #778379;
+  color: #506348;
   margin: 0;
 }
 .primary {
@@ -281,11 +281,11 @@ h2 {
 .panelhead > span {
   font-size: 8px;
   letter-spacing: 1px;
-  color: #82907b;
+  color: #506348;
 }
 .paneldesc {
   font-size: 11px;
-  color: #8a948b;
+  color: #506348;
   margin: 9px 24px 20px;
 }
 .evidence {
@@ -309,16 +309,16 @@ h2 {
   align-items: center;
   font-size: 9px;
   letter-spacing: 0.7px;
-  color: #71816a;
+  color: #506348;
 }
 .signalicon {
   font-size: 18px;
-  color: #688753;
+  color: #506348;
 }
 .signal code {
   margin-left: auto;
   font-size: 9px;
-  color: #8d9a8e;
+  color: #506348;
   letter-spacing: 0;
 }
 .signal p {
@@ -337,7 +337,7 @@ h2 {
 }
 .measure span {
   font-size: 10px;
-  color: #889382;
+  color: #506348;
 }
 .empty {
   display: flex;
@@ -355,7 +355,7 @@ h2 {
   width: 70px;
   height: 70px;
   font-size: 42px;
-  color: #758b62;
+  color: #506348;
   line-height: 62px;
 }
 .empty h3 {
@@ -365,12 +365,12 @@ h2 {
 }
 .empty p {
   font-size: 12px;
-  color: #8a948b;
+  color: #506348;
   margin-top: 0;
 }
 .empty small {
   font-size: 10px;
-  color: #7b8d70;
+  color: #506348;
   border: 1px solid #e6ebdf;
   border-radius: 20px;
   padding: 7px 12px;
@@ -381,7 +381,7 @@ h2 {
 }
 .reportmode {
   font-size: 9px;
-  color: #7c8e71;
+  color: #506348;
   letter-spacing: 1px;
   margin-bottom: 20px;
 }
@@ -394,7 +394,7 @@ h2 {
 }
 .confidence {
   font-size: 9px;
-  color: #789264;
+  color: #506348;
 }
 .confidence span {
   float: right;
@@ -407,7 +407,7 @@ h2 {
 .findings li {
   font-size: 12px;
   line-height: 1.8;
-  color: #647260;
+  color: #506348;
 }
 .refs {
   display: flex;
@@ -435,7 +435,7 @@ footer {
   letter-spacing: 1px;
   display: flex;
   justify-content: space-between;
-  color: #899783;
+  color: #506348;
   padding: 27px 0;
 }
 footer span {

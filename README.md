@@ -75,3 +75,7 @@ Vite defaults to `/incident-desk/` for Pages. Compose builds with `VITE_BASE=/` 
 The shared telemetry sandbox serializes mutations and collection through one API process; it is deliberately a single-user demonstration. Telemetry counters reset on container restart; saved investigation reports remain in PostgreSQL. Fixed rules make evaluation repeatable, while optional model output remains nondeterministic. The code does not execute recommended remediation, access production systems, or replace on-call judgment.
 
 MIT licensed. All evidence and incidents are synthetic.
+
+### Browser contrast regression checks
+
+Run `npx playwright install chromium` once, then `npm run test:browser`. CI checks rendered text contrast on desktop and mobile, including populated workflow states, using axe. Tests serve the built app under its repository subpath. These focused checks do not establish full accessibility conformance.
