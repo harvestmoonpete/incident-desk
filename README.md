@@ -79,3 +79,7 @@ MIT licensed. All evidence and incidents are synthetic.
 ### Browser contrast regression checks
 
 Run `npx playwright install chromium` once, then `npm run test:browser`. CI checks rendered text contrast on desktop and mobile, including populated workflow states, using axe. Tests serve the built app under its repository subpath. These focused checks do not establish full accessibility conformance.
+
+## Small improvement · November 7, 2026
+
+Download a JSON investigation report with the scenario, execution mode, observations, hypotheses, next steps, and the exact evidence snapshot used for its references.

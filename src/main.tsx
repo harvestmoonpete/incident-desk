@@ -34,6 +34,25 @@ function App() {
       setSelected("");
     });
   }
+  function downloadReport() {
+    if (!report || !state) return;
+    const exportData = {
+      version: 1,
+      environment: live ? "local services" : "offline browser fixtures",
+      scenario: state.scenario,
+      report,
+    };
+    const url = URL.createObjectURL(
+      new Blob([JSON.stringify(exportData, null, 2)], {
+        type: "application/json",
+      }),
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `incident-${state.scenario}.json`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
   return (
     <div className="shell">
       <aside>
@@ -170,7 +189,10 @@ function App() {
                   const result = await desk.investigate(
                     model ? "model" : "rules",
                   );
-                  setReport(result);
+                  setReport({
+                    ...result,
+                    evidence: result.evidence ?? state?.evidence ?? [],
+                  });
                   if (result.evidence && state)
                     setState({ ...state, evidence: result.evidence });
                 })
@@ -198,7 +220,9 @@ function App() {
                   className={"signal " + (selected === e.id ? "highlight" : "")}
                 >
                   <div className="signalhead">
-                    <span className="signalicon">{["⌁", "↗", "≋"][i % 3]}</span>
+                    <span className="signalicon">
+                      {["⌁", "↗", "≋"][i % 3]}
+                    </span>
                     <span>{e.kind.toUpperCase()}</span>
                     <code>{e.id}</code>
                   </div>
@@ -214,7 +238,13 @@ function App() {
           <section className="panel report">
             <div className="panelhead">
               <h2>Investigation report</h2>
-              <span>{report ? "COMPLETE" : "AWAITING RUN"}</span>
+              <button
+                className="quiet"
+                disabled={!report || busy}
+                onClick={downloadReport}
+              >
+                Download report JSON
+              </button>
             </div>
             {!report ? (
               <div className="empty">
