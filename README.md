@@ -87,3 +87,7 @@ Download a JSON investigation report with the scenario, execution mode, observat
 ## Guided challenge · November 8, 2026
 
 Start the guided backlog investigation, run the report, open two distinct evidence references, and choose a supported diagnosis. Incorrect answers provide evidence-based feedback. Changing scenarios or resetting exits the exercise; a new investigation clears its evidence-inspection progress. Offline mode uses fixtures; Compose uses local telemetry. Download the report to preserve the evidence and reasoning.
+
+### Inline evidence inspection
+
+Select a hypothesis’s evidence reference to open its measurement beside the reasoning. The inspector uses the report’s captured evidence snapshot, labels offline fixtures versus local telemetry, and explicitly identifies missing references. It does not make new telemetry or model requests. **Return to hypothesis** or Escape closes the inspector and restores keyboard focus to the reference. Changing scenarios, resetting, or generating a new report clears the preview. Desktop/mobile browser tests verify source contents, keyboard return, scenario isolation, and text contrast.

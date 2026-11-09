@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { desk, live, scenarios, Snapshot, Report, Scenario } from "./data";
 import "./style.css";
@@ -9,12 +9,34 @@ function App() {
     [error, setError] = useState(""),
     [model, setModel] = useState(false),
     [selected, setSelected] = useState("");
+  const [preview, setPreview] = useState<{
+    id: string;
+    hypothesis: number;
+  } | null>(null);
+  const referenceLink = useRef<HTMLAnchorElement | null>(null);
+  const previewHeading = useRef<HTMLHeadingElement>(null);
+  const previewEvidence = report?.evidence?.find(
+    (evidence) => evidence.id === preview?.id,
+  );
+  useEffect(() => {
+    if (preview) previewHeading.current?.focus();
+  }, [preview]);
+  function closePreview() {
+    setPreview(null);
+    referenceLink.current?.focus();
+  }
   const [challenge, setChallenge] = useState(false);
   const [inspected, setInspected] = useState<string[]>([]);
   const [prediction, setPrediction] = useState("");
   const [answer, setAnswer] = useState("");
   const challengeComplete = challenge && answer === "queue";
-  function inspectSignal(id: string) {
+  function inspectSignal(
+    id: string,
+    hypothesis: number,
+    link: HTMLAnchorElement,
+  ) {
+    referenceLink.current = link;
+    setPreview({ id, hypothesis });
     setSelected(id);
     if (
       challenge &&
@@ -26,6 +48,7 @@ function App() {
     void run(async () => {
       setState(await desk.select("queue"));
       setReport(null);
+      setPreview(null);
       setSelected("");
       setModel(false);
       setChallenge(true);
@@ -57,6 +80,7 @@ function App() {
     void run(async () => {
       setState(await desk.select(s));
       setReport(null);
+      setPreview(null);
       setSelected("");
     });
   }
@@ -134,6 +158,7 @@ function App() {
                 setChallenge(false);
                 setState(await desk.reset());
                 setReport(null);
+                setPreview(null);
                 setSelected("");
               })
             }
@@ -312,6 +337,7 @@ function App() {
                   const result = await desk.investigate(
                     model ? "model" : "rules",
                   );
+                  setPreview(null);
                   setInspected([]);
                   setAnswer("");
                   setReport({
@@ -345,9 +371,7 @@ function App() {
                   className={"signal " + (selected === e.id ? "highlight" : "")}
                 >
                   <div className="signalhead">
-                    <span className="signalicon">
-                      {["⌁", "↗", "≋"][i % 3]}
-                    </span>
+                    <span className="signalicon">{["⌁", "↗", "≋"][i % 3]}</span>
                     <span>{e.kind.toUpperCase()}</span>
                     <code>{e.id}</code>
                   </div>
@@ -403,12 +427,84 @@ function App() {
                         <a
                           key={id}
                           href={"#" + id}
-                          onClick={() => inspectSignal(id)}
+                          aria-expanded={
+                            preview?.hypothesis === i && preview.id === id
+                          }
+                          aria-controls={
+                            preview?.hypothesis === i && preview.id === id
+                              ? "evidence-preview"
+                              : undefined
+                          }
+                          onClick={(event) => {
+                            event.preventDefault();
+                            inspectSignal(id, i, event.currentTarget);
+                          }}
                         >
                           ↗ {id}
                         </a>
                       ))}
                     </div>
+                    {preview?.hypothesis === i && (
+                      <section
+                        id="evidence-preview"
+                        className="evidence-preview"
+                        aria-labelledby="evidence-preview-title"
+                        onKeyDown={(event) => {
+                          if (event.key === "Escape") {
+                            event.preventDefault();
+                            closePreview();
+                          }
+                        }}
+                      >
+                        <div className="preview-header">
+                          <h4
+                            id="evidence-preview-title"
+                            ref={previewHeading}
+                            tabIndex={-1}
+                          >
+                            Evidence: {preview.id}
+                          </h4>
+                          <span>{previewEvidence?.kind ?? "Unavailable"}</span>
+                        </div>
+                        {previewEvidence ? (
+                          <>
+                            <p className="preview-summary">
+                              {previewEvidence.summary}
+                            </p>
+                            <dl className="preview-measure">
+                              <div>
+                                <dt>Observed value</dt>
+                                <dd>{previewEvidence.value}</dd>
+                              </div>
+                              <div>
+                                <dt>Source</dt>
+                                <dd>
+                                  {live ? "Local telemetry" : "Offline fixture"}
+                                </dd>
+                              </div>
+                            </dl>
+                            <p className="preview-context">
+                              From this report’s evidence snapshot. Cited by “
+                              {h.title}”. This observation supports a
+                              hypothesis; it does not establish the cause on its
+                              own.
+                            </p>
+                          </>
+                        ) : (
+                          <p className="preview-summary">
+                            This reference is missing from the report’s evidence
+                            snapshot. Treat this conclusion as unsupported until
+                            the source is available.
+                          </p>
+                        )}
+                        <button className="quiet" onClick={closePreview}>
+                          Return to hypothesis
+                        </button>
+                        <span className="preview-hint">
+                          Escape also closes this inspector.
+                        </span>
+                      </section>
+                    )}
                   </article>
                 ))}
                 <h4>OBSERVATIONS</h4>

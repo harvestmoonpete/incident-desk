@@ -623,3 +623,89 @@ footer span {
     flex-direction: column;
   }
 }
+
+.evidence-preview {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid #9bb9b7;
+  border-radius: 8px;
+  background: #eff7f5;
+  color: #183d3a;
+}
+.preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.findings .preview-header h4 {
+  font-size: 14px;
+  letter-spacing: 0;
+  margin: 0;
+  text-transform: none;
+  color: #183d3a;
+  scroll-margin-top: 24px;
+}
+.preview-header > span {
+  font-size: 11px;
+  color: #42635e;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.findings .evidence-preview .preview-summary {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 14px 0;
+  color: #264b45;
+}
+.preview-measure {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+  padding: 14px 0;
+  border-top: 1px solid #c2d9d2;
+  border-bottom: 1px solid #c2d9d2;
+}
+.preview-measure dt {
+  font-size: 11px;
+  color: #42635e;
+}
+.preview-measure dd {
+  font-size: 18px;
+  font-weight: 650;
+  margin: 5px 0 0;
+  color: #183d3a;
+}
+.preview-measure > div:last-child dd {
+  font-size: 13px;
+}
+.findings .evidence-preview .preview-context {
+  font-size: 12px;
+  color: #42635e;
+  line-height: 1.65;
+  margin: 0 0 12px;
+}
+.preview-hint {
+  display: block;
+  margin-top: 10px;
+  font-size: 11px;
+  color: #42635e;
+}
+.evidence-preview .quiet {
+  font-size: 12px;
+  color: #183d3a;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.evidence-preview :focus-visible,
+.refs a:focus-visible {
+  outline: 3px solid #216cb2;
+  outline-offset: 4px;
+}
+.refs a[aria-expanded="true"] {
+  background: #d9eee7;
+  border-color: #638d82;
+  color: #183d3a;
+}
