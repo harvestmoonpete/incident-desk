@@ -83,3 +83,7 @@ Run `npx playwright install chromium` once, then `npm run test:browser`. CI chec
 ## Small improvement · November 7, 2026
 
 Download a JSON investigation report with the scenario, execution mode, observations, hypotheses, next steps, and the exact evidence snapshot used for its references.
+
+## Guided challenge · November 8, 2026
+
+Start the guided backlog investigation, run the report, open two distinct evidence references, and choose a supported diagnosis. Incorrect answers provide evidence-based feedback. Changing scenarios or resetting exits the exercise; a new investigation clears its evidence-inspection progress. Offline mode uses fixtures; Compose uses local telemetry. Download the report to preserve the evidence and reasoning.

@@ -1,0 +1,23 @@
+import {test,expect} from '@playwright/test';
+import {AxeBuilder} from '@axe-core/playwright';
+test('investigation challenge requires evidence and gives diagnostic feedback',async({page})=>{
+ await page.goto('./');
+ await page.getByRole('button',{name:'Start investigation challenge'}).click();
+ const challenge=page.getByRole('region',{name:'Explain a backlog while HTTP requests still succeed.'});
+ await expect(challenge.getByRole('combobox',{name:'Your diagnosis'})).toBeDisabled();
+ await page.getByRole('button',{name:/Run investigation/}).click();
+ await page.getByRole('link',{name:'↗ queue-1',exact:true}).click();
+ await page.getByRole('link',{name:'↗ queue-1',exact:true}).click();
+ await expect(challenge.getByRole('combobox',{name:'Your diagnosis'})).toBeDisabled();
+ await page.getByRole('link',{name:'↗ worker-1',exact:true}).click();
+ await challenge.getByRole('combobox',{name:'Your diagnosis'}).selectOption('deployment');
+ await challenge.getByRole('button',{name:'Check diagnosis'}).click();
+ await expect(challenge).toContainText('That diagnosis is not supported');
+ await challenge.getByRole('combobox',{name:'Your diagnosis'}).selectOption('queue');
+ await challenge.getByRole('button',{name:'Check diagnosis'}).click();
+ await expect(challenge).toContainText('Challenge complete');
+ expect((await new AxeBuilder({page}).withRules(['color-contrast']).analyze()).violations).toEqual([]);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.getByRole('navigation',{name:'Incident scenarios'}).getByRole('button').first().click();
+ await expect(page.getByRole('button',{name:'Start investigation challenge'})).toBeVisible();
+});

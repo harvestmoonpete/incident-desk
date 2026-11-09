@@ -9,6 +9,31 @@ function App() {
     [error, setError] = useState(""),
     [model, setModel] = useState(false),
     [selected, setSelected] = useState("");
+  const [challenge, setChallenge] = useState(false);
+  const [inspected, setInspected] = useState<string[]>([]);
+  const [prediction, setPrediction] = useState("");
+  const [answer, setAnswer] = useState("");
+  const challengeComplete = challenge && answer === "queue";
+  function inspectSignal(id: string) {
+    setSelected(id);
+    if (
+      challenge &&
+      report?.hypotheses.some((h) => h.evidence_ids.includes(id))
+    )
+      setInspected((ids) => (ids.includes(id) ? ids : [...ids, id]));
+  }
+  function startChallenge() {
+    void run(async () => {
+      setState(await desk.select("queue"));
+      setReport(null);
+      setSelected("");
+      setModel(false);
+      setChallenge(true);
+      setInspected([]);
+      setPrediction("");
+      setAnswer("");
+    });
+  }
   async function run(fn: () => Promise<void>) {
     setBusy(true);
     setError("");
@@ -28,6 +53,7 @@ function App() {
     void run(async () => setState(await desk.snapshot()));
   }, []);
   function choose(s: Scenario) {
+    setChallenge(false);
     void run(async () => {
       setState(await desk.select(s));
       setReport(null);
@@ -105,6 +131,7 @@ function App() {
             className="quiet"
             onClick={() =>
               void run(async () => {
+                setChallenge(false);
                 setState(await desk.reset());
                 setReport(null);
                 setSelected("");
@@ -128,6 +155,101 @@ function App() {
             <span className="dot" />
             {live ? "Live local telemetry" : "Offline interactive demo"}
           </div>
+        </section>
+        <section className="challenge" aria-labelledby="challenge-title">
+          <p className="eyebrow">GUIDED CHALLENGE · ABOUT 3 MINUTES</p>
+          <h2 id="challenge-title">
+            Explain a backlog while HTTP requests still succeed.
+          </h2>
+          <p>
+            Customers say background work is late. Is this a deployment
+            regression, database exhaustion, or worker capacity? Build a case
+            from evidence rather than guessing from the symptom.
+          </p>
+          <p>
+            {live
+              ? "Starting selects a queue fault in the local telemetry service."
+              : "Starting loads offline queue fixtures. No production telemetry or live AI is used."}
+          </p>
+          {!challenge ? (
+            <button
+              className="primary"
+              disabled={busy || !state}
+              onClick={startChallenge}
+            >
+              Start investigation challenge
+            </button>
+          ) : (
+            <>
+              <ol className="challenge-steps">
+                <li>✓ Load the backlog scenario.</li>
+                <li>
+                  {report ? "✓" : "○"} Use Run investigation below to collect a
+                  traceable report.
+                </li>
+                <li>
+                  {inspected.length >= 2 ? "✓" : "○"} Follow both evidence links
+                  in the report to inspect the cited signals.
+                </li>
+                <li>
+                  {challengeComplete ? "✓" : "○"} Choose the diagnosis supported
+                  by those signals.
+                </li>
+              </ol>
+              <p role="status" className="challenge-status">
+                {challengeComplete
+                  ? "Challenge complete: the backlog and slow active worker support a throughput deficit, while successful HTTP requests do not establish worker health."
+                  : !report
+                    ? "Next: run an investigation using the control below."
+                    : inspected.length < 2
+                      ? `Next: inspect the report's evidence references (${inspected.length} of 2 opened).`
+                      : "Evidence inspected. Choose a diagnosis, then check your reasoning."}
+              </p>
+              <label className="challenge-choice">
+                Your diagnosis
+                <select
+                  value={prediction}
+                  disabled={!report || inspected.length < 2 || busy}
+                  onChange={(e) => {
+                    setPrediction(e.target.value);
+                    setAnswer("");
+                  }}
+                >
+                  <option value="">Choose a diagnosis</option>
+                  <option value="deployment">Deployment regression</option>
+                  <option value="pool">Database connection exhaustion</option>
+                  <option value="queue">Worker throughput deficit</option>
+                </select>
+              </label>
+              <div className="challenge-actions">
+                <button
+                  className="primary"
+                  disabled={!prediction || inspected.length < 2 || busy}
+                  onClick={() => setAnswer(prediction)}
+                >
+                  Check diagnosis
+                </button>
+                <button className="quiet" onClick={() => setChallenge(false)}>
+                  Exit challenge
+                </button>
+              </div>
+              {answer && !challengeComplete && (
+                <p role="status">
+                  That diagnosis is not supported by these signals. The queue is
+                  growing while the active worker completes too little work.
+                  Revisit queue-1 and worker-1, then try again.
+                </p>
+              )}
+              {challengeComplete && (
+                <p>
+                  Next useful action: measure arrival and completion rates
+                  before changing worker capacity. Preserve the report with
+                  Download report JSON below. A hypothesis still needs a
+                  targeted recovery and a fresh measurement to confirm it.
+                </p>
+              )}
+            </>
+          )}
         </section>
         <div className="guide">
           <b>YOUR THREE-MINUTE WALKTHROUGH</b>
@@ -189,6 +311,8 @@ function App() {
                   const result = await desk.investigate(
                     model ? "model" : "rules",
                   );
+                  setInspected([]);
+                  setAnswer("");
                   setReport({
                     ...result,
                     evidence: result.evidence ?? state?.evidence ?? [],
@@ -278,7 +402,7 @@ function App() {
                         <a
                           key={id}
                           href={"#" + id}
-                          onClick={() => setSelected(id)}
+                          onClick={() => inspectSignal(id)}
                         >
                           ↗ {id}
                         </a>
