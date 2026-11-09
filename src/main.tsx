@@ -298,9 +298,10 @@ function App() {
                 <input
                   type="checkbox"
                   checked={model}
+                  disabled={challenge}
                   onChange={(e) => setModel(e.target.checked)}
                 />{" "}
-                Use configured model
+                Use configured model {challenge && "(exit challenge to enable)"}
               </label>
             )}
             <button
