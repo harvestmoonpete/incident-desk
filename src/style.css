@@ -994,3 +994,7 @@ footer span {
   background: #fff0cd;
   color: #624712;
 }
+
+.lab-result-card h3 {
+  scroll-margin-top: 24px;
+}

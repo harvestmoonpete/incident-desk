@@ -145,7 +145,7 @@ export function EvidenceLab({
               setComparison(compareEvidence(evidence, excluded));
               requestAnimationFrame(() => {
                 resultHeading.current?.focus();
-                resultHeading.current?.scrollIntoView({ block: "nearest" });
+                resultHeading.current?.scrollIntoView({ block: "start" });
               });
             }}
           >
