@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { desk, live, scenarios, Snapshot, Report, Scenario } from "./data";
+import { EvidenceLab } from "./EvidenceLab";
 import "./style.css";
 function App() {
   const [state, setState] = useState<Snapshot | null>(null),
@@ -9,6 +10,8 @@ function App() {
     [error, setError] = useState(""),
     [model, setModel] = useState(false),
     [selected, setSelected] = useState("");
+  const [reportVersion, setReportVersion] = useState(0);
+  const labHeading = useRef<HTMLHeadingElement>(null);
   const [preview, setPreview] = useState<{
     id: string;
     hypothesis: number;
@@ -338,6 +341,7 @@ function App() {
                     model ? "model" : "rules",
                   );
                   setPreview(null);
+                  setReportVersion((version) => version + 1);
                   setInspected([]);
                   setAnswer("");
                   setReport({
@@ -387,13 +391,25 @@ function App() {
           <section className="panel report">
             <div className="panelhead">
               <h2>Investigation report</h2>
-              <button
-                className="quiet"
-                disabled={!report || busy}
-                onClick={downloadReport}
-              >
-                Download report JSON
-              </button>
+              <div className="report-tools">
+                <button
+                  className="quiet"
+                  disabled={!report || busy}
+                  onClick={() => {
+                    labHeading.current?.focus();
+                    labHeading.current?.scrollIntoView({ block: "start" });
+                  }}
+                >
+                  Test evidence
+                </button>
+                <button
+                  className="quiet"
+                  disabled={!report || busy}
+                  onClick={downloadReport}
+                >
+                  Download report JSON
+                </button>
+              </div>
             </div>
             {!report ? (
               <div className="empty">
@@ -523,6 +539,14 @@ function App() {
             )}
           </section>
         </div>
+        {report && (
+          <EvidenceLab
+            key={reportVersion}
+            report={report}
+            live={live}
+            headingRef={labHeading}
+          />
+        )}
         <footer>
           BUILT TO EXPLAIN THE WHY{" "}
           <span>
